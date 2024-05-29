@@ -1,0 +1,126 @@
+[no longer needed: zero-pad MAC address to match ifconfig(8) output
+https://sources.debian.org/patches/arpwatch/2.1a15-6/33_bug315215_zero-pad-MAC/]
+
+remove DECnet remnants
+
+use a red-black tree instead of linked list for searching vendor IDs
+
+Index: ec.c
+--- ec.c.orig	Mon May 27 10:59:50 2024
++++ ec.c	Mon May 27 13:41:10 2024
+@@ -66,20 +66,28 @@
+ #include "arpwatch.h"
+ #include "ec.h"
+ #include "util.h"
++#include "tree.h"
+ 
+ /* Basic data structure */
+-struct ecent {
++struct ecnode {
++        RB_ENTRY(ecnode) entry;
+ 	u_int32_t o;		/* first 3 octets */
+ 	char *text;		/* associated text */
+ };
+ 
+-static struct ecent *list;
+-static u_int ec_last;
+-static u_int ec_len;
+-
+ /* Forwards */
+-static int ec_a2o(char *, u_int32_t *);
++int ocmp(struct ecnode *, struct ecnode *);
+ 
++/* Compare two ecnode addresses */
++int
++ocmp(struct ecnode *e1, struct ecnode *e2)
++{
++  return (e1->o < e2->o ? -1 : e1->o > e2->o);
++}
++
++RB_HEAD(ectree, ecnode) head = RB_INITIALIZER(&head);
++RB_GENERATE(ectree, ecnode, entry, ocmp);
++
+ /* Convert an 3 octets from an ethernet address to a u_int32_t */
+ static int
+ ec_a2o(char *cp, u_int32_t *op)
+@@ -99,28 +107,18 @@
+ int
+ ec_add(u_int32_t o, const char *text)
+ {
+-	struct ecent *olist;
++        struct ecnode *n;
+ 
+-	if (ec_last >= ec_len) {
+-		if (list == NULL) {
+-			ec_len = 512;
+-			olist = NULL;
+-			list = malloc(ec_len * sizeof(*list));
+-		} else {
+-			ec_len *= 2;
+-			olist = list;
+-			list = realloc(olist, ec_len * sizeof(*list));
+-		}
+-		if (list == NULL) {
+-			if (olist != NULL)
+-				free(olist);
+-			lg(LOG_ERR, "ec_add(): malloc: %s", strerror(errno));
+-			exit(1);
+-		}
++	if ((n = malloc(sizeof(struct ecnode))) == NULL) {
++	        syslog(LOG_ERR, "%s: malloc\n", __func__);
++		return (0);
+ 	}
+-	list[ec_last].o = o;
+-	list[ec_last].text = savestr(text);
+-	++ec_last;
++
++	n->o = o;
++	n->text = savestr(text);
++
++	RB_INSERT(ectree, &head, n);
++	
+ 	return (1);
+ }
+ 
+@@ -128,16 +126,16 @@
+ char *
+ ec_find(const u_char *e)
+ {
+-	u_int32_t o;
+-	int i;
++        struct ecnode find, *res;
++	u_int32_t o = 0;
+ 
+-	o = 0;
+ 	memmove(&o, e, 3);
+-	for (i = 0; i < ec_last; ++i)
+-		if (list[i].o == o)
+-			return (list[i].text);
+-
+-	return (NULL);
++	find.o = o;
++	res = RB_FIND(ectree, &head, &find);
++	if (res == NULL)
++	        return (NULL);
++	else
++	        return res->text;
+ }
+ 
+ /* Loop through the ethernet code database */
+@@ -193,16 +191,6 @@
+ 	}
+ 
+ 	return (1);
+-}
+-
+-/* DECnet local logical address prefix */
+-static u_char decnet[3] = { 0xaa, 0x0, 0x4 };
+-
+-/* Returns true if an ethernet address is decnet, else false */
+-int
+-isdecnet(const u_char *e)
+-{
+-	return (memcmp(e, decnet, sizeof(decnet)) == 0);
+ }
+ 
+ /* Convert an ascii ethernet string to ethernet address */

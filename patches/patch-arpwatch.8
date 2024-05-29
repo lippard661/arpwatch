@@ -1,0 +1,52 @@
+Add -u flag, to drop privileges to that user given
+
+Index: arpwatch.8
+--- arpwatch.8.in.orig	Sat Dec  2 17:48:53 2023
++++ arpwatch.8.in	Tue May 28 15:16:35 2024
+@@ -43,6 +43,7 @@
+ .Op Fl n Ar net[/width]
+ .Op Fl x Ar net[/width]
+ .Op Fl r Ar file
++.Op Fl u Ar username
+ .Sh DESCRIPTION
+ .Nm
+ keeps track of ethernet/ip address pairings. It syslogs activity
+@@ -78,7 +79,7 @@
+ flag is used to specify the
+ .Nm
+ working directory. This defaults to
+-.Ar /usr/local/arpwatch .
++.Ar ${LOCALSTATEDIR}/arpwatch .
+ .Pp
+ The
+ .Fl f
+@@ -134,6 +135,18 @@
+ .Nm
+ does not fork.
+ .Pp
++The
++.Fl u
++flag instructs
++.Xr arpwatch
++to drop root privileges and change the UID to
++.It Pa username
++and GID to the primary group of
++.It Pa username .
++This is recommended for security reasons, but
++.It Pa username
++has to have write access to the default directory.
++.Pp
+ Note that an empty
+ .Ar arp.dat
+ file must be created before the first time you run
+@@ -222,8 +235,8 @@
+ once every 15 minutes.
+ The SIGHUP signal causes it to update immediately.
+ .Sh FILES
+-.Bl -tag -width ".Pa /usr/local/arpwatch" -compact
+-.It Pa /usr/local/arpwatch
++.Bl -tag -width ".Pa ${LOCALSTATEDIR}/arpwatch" -compact
++.It Pa ${LOCALSTATEDIR}/arpwatch
+ default directory
+ .It Pa arp.dat
+ default ethernet/ip address database
