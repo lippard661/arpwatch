@@ -9,3 +9,5 @@ It also adds the use of unveil (and still contains a non-functional, commented-o
 for bpf BIOCSETF in pcap_setfilter, which can't be pledged today).
 
 arpwatch-3.6.tgz is a Legion of Dynamic Discord signify-signed OpenBSD package. Signify public key is https://www.discord.org/lippard/software/discord.org-2024-pkg.pub
+Next signify public key is https://www.discord.org/lippard/software/discord.org-2025-pkg.pub
+
