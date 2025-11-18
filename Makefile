@@ -1,6 +1,6 @@
 COMMENT=	monitor arp & rarp requests
 
-DISTNAME=	arpwatch-3.6
+DISTNAME=	arpwatch-3.9
 #REVISION=	0
 CATEGORIES=	net
 
