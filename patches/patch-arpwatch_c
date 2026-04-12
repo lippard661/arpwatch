@@ -95,16 +95,16 @@ Index: arpwatch.c
 +		setuid(getuid());
 +	}
  
-+       /* pledge not used because need pcap_filter BIOCSETF */
-+       /* if (pledge ("stdio rpath cpath inet dns proc exec tty unveil error", NULL) == -1)
++       /* pledge not used because need pcap_filter BIOCSETF, not in bpf promise */
++       /* if (pledge ("stdio rpath cpath inet dns proc exec tty bpf unveil error", NULL) == -1)
 +	  lg(LOG_ERR, "pledge: %s", strerror(errno)); */
 +       /* unveil */
-+       /* r for /, rx for sendmail, rwc for /tmp, /dev/null and arpdir */
++       /* r for /, x for sendmail, rwc for /tmp and arpdir, rw for /dev/null */
 +        if (unveil ("/", "r") == -1)
 +               lg(LOG_ERR, "unveil /");
 +        if (unveil ("/tmp", "rwc") == -1)
 +               lg(LOG_ERR, "unveil /tmp");
-+        if (unveil ("/dev/null", "rwc") == -1)
++        if (unveil ("/dev/null", "rw") == -1)
 +               lg(LOG_ERR, "unveil /dev/null");
 +        if (unveil ("/usr/sbin/sendmail", "x") == -1)
 +               lg(LOG_ERR, "unveil /usr/sbin/sendmail");
