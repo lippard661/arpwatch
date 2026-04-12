@@ -1,0 +1,11 @@
+remove isdecnet
+
+Index: ec.h
+--- ec.h.orig	2026-04-12 15:41:44
++++ ec.h	2026-04-12 15:41:49
+@@ -6,5 +6,4 @@
+ int	ec_add(u_int32_t, const char *);
+ char	*ec_find(const u_char *);
+ int	ec_loop(FILE *, ec_process, const char *);
+-int	isdecnet(const u_char *);
+ int	str2e(const char *, u_char *);
