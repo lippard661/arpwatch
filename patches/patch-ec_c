@@ -34,7 +34,7 @@ Index: ec.c
 +int
 +ocmp(struct ecnode *e1, struct ecnode *e2)
 +{
-+  return (e1->o < e2->o ? -1 : e1->o > e2->o);
++  return (e1->o < e2->o ? -1 : e1->o > e2->o ? 1 : 0);
 +}
 +
 +RB_HEAD(ectree, ecnode) head = RB_INITIALIZER(&head);
