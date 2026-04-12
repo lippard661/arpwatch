@@ -106,7 +106,7 @@ Index: arpwatch.c
 +               lg(LOG_ERR, "unveil /tmp");
 +        if (unveil ("/dev/null", "rwc") == -1)
 +               lg(LOG_ERR, "unveil /dev/null");
-+        if (unveil ("/usr/sbin/sendmail", "rx") == -1)
++        if (unveil ("/usr/sbin/sendmail", "x") == -1)
 +               lg(LOG_ERR, "unveil /usr/sbin/sendmail");
 +        if (unveil (arpdir, "rwc") == -1)
 +               lg(LOG_ERR, "unveil %s", arpdir);
