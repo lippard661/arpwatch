@@ -4,7 +4,7 @@ OpenBSD port/package for arpwatch-3.9
 Licensing for arpwatch itself is as per source code and LLNL repository.
 
 This basically updates the OpenBSD patches for version 2.1a15 to work on version 3.9, removing the unnecessary ones (leading zero padding is now
-the default by configuring with --enable-zeropad) and completing the removal of DECnet references.
+the default by configuring with --enable-zeropad; the report.c patch is redundant) and completing the removal of DECnet references.
 It also adds the use of unveil (and still contains a non-functional, commented-out attempt to add pledge, which can't work due to the need
 for bpf BIOCSETF in pcap_setfilter, which can't be pledged today).
 
