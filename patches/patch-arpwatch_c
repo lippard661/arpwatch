@@ -4,8 +4,8 @@
 - pledge and unveil
 
 Index: arpwatch.c
---- arpwatch.c.orig	Tue May 28 15:23:09 2024
-+++ arpwatch.c	Tue May 28 16:52:01 2024
+--- arpwatch.c.orig	Sun Dec  3 11:10:05 2023
++++ arpwatch.c	Wed Jun 24 15:24:23 2026
 @@ -72,6 +72,9 @@
  #include <syslog.h>
  #include <unistd.h>
@@ -78,7 +78,7 @@ Index: arpwatch.c
  		default:
  			usage();
  		}
-@@ -381,13 +416,35 @@
+@@ -381,13 +416,32 @@
  		}
  	}
  
@@ -95,9 +95,6 @@ Index: arpwatch.c
 +		setuid(getuid());
 +	}
  
-+       /* pledge not used because need pcap_filter BIOCSETF, not in bpf promise */
-+       /* if (pledge ("stdio rpath cpath inet dns proc exec tty bpf unveil error", NULL) == -1)
-+	  lg(LOG_ERR, "pledge: %s", strerror(errno)); */
 +       /* unveil */
 +       /* r for /, x for sendmail, rwc for /tmp and arpdir, rw for /dev/null */
 +        if (unveil ("/", "r") == -1)
@@ -116,7 +113,20 @@ Index: arpwatch.c
  	/* Must be ethernet or fddi */
  	linktype = pcap_datalink(pd);
  	if (linktype != DLT_EN10MB && linktype != DLT_FDDI) {
-@@ -513,8 +570,8 @@
+@@ -405,6 +459,12 @@
+ 		lg(LOG_ERR, "pcap_setfilter: %s", pcap_geterr(pd));
+ 		exit(1);
+ 	}
++
++       /* pledge not used earlier because need pcap_filter BIOCSETF, not in bpf promise */
++       if (pledge ("stdio rpath cpath inet dns proc exec tty bpf unveil error", NULL) == -1)
++	        lg(LOG_ERR, "pledge: %s", strerror(errno));
++                exit(1);
++
+ 	if (rfilename == NULL)
+ 		lg(LOG_INFO, "listening on %s", interface);
+ 
+@@ -513,8 +573,8 @@
  	t = h->ts.tv_sec;
  	can_checkpoint = 0;
  	if (!ent_add(sia, sea, t, NULL))
@@ -127,7 +137,7 @@ Index: arpwatch.c
  	can_checkpoint = 1;
  
  	if (docheckpoint) {
-@@ -673,8 +730,8 @@
+@@ -673,8 +733,8 @@
  	t = h->ts.tv_sec;
  	can_checkpoint = 0;
  	if (!ent_add(sia, sea, t, NULL))
@@ -138,7 +148,7 @@ Index: arpwatch.c
  	can_checkpoint = 1;
  
  	if (docheckpoint) {
-@@ -944,6 +1001,6 @@
+@@ -944,6 +1004,6 @@
  	    "usage: %s [-CdFNpqsvzZ] [-D arpdir] [-f datafile]"
  	    " [-i interface]\n\t"
  	    " [-P pidfile] [-w watcher@email] [-W watchee@email]\n\t"
