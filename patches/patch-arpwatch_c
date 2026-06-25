@@ -5,7 +5,7 @@
 
 Index: arpwatch.c
 --- arpwatch.c.orig	Sun Dec  3 11:10:05 2023
-+++ arpwatch.c	Wed Jun 24 15:24:23 2026
++++ arpwatch.c	Wed Jun 24 17:25:35 2026
 @@ -72,6 +72,9 @@
  #include <syslog.h>
  #include <unistd.h>
@@ -119,7 +119,7 @@ Index: arpwatch.c
  	}
 +
 +       /* pledge not used earlier because need pcap_filter BIOCSETF, not in bpf promise */
-+       if (pledge ("stdio rpath cpath inet dns proc exec tty bpf unveil error", NULL) == -1)
++       if (pledge ("stdio rpath cpath inet dns proc exec tty bpf", NULL) == -1)
 +	        lg(LOG_ERR, "pledge: %s", strerror(errno));
 +                exit(1);
 +
