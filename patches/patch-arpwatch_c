@@ -5,7 +5,7 @@
 
 Index: arpwatch.c
 --- arpwatch.c.orig	Sun Dec  3 11:10:05 2023
-+++ arpwatch.c	Wed Jun 24 17:25:35 2026
++++ arpwatch.c	Thu Jun 25 07:29:02 2026
 @@ -72,6 +72,9 @@
  #include <syslog.h>
  #include <unistd.h>
@@ -113,20 +113,21 @@ Index: arpwatch.c
  	/* Must be ethernet or fddi */
  	linktype = pcap_datalink(pd);
  	if (linktype != DLT_EN10MB && linktype != DLT_FDDI) {
-@@ -405,6 +459,12 @@
+@@ -405,6 +459,13 @@
  		lg(LOG_ERR, "pcap_setfilter: %s", pcap_geterr(pd));
  		exit(1);
  	}
 +
 +       /* pledge not used earlier because need pcap_filter BIOCSETF, not in bpf promise */
-+       /* if (pledge ("stdio rpath cpath inet dns proc exec tty bpf", NULL) == -1)
++       if (pledge ("stdio rpath cpath inet dns proc exec tty bpf", NULL) == -1) {
 +	        lg(LOG_ERR, "pledge: %s", strerror(errno));
-+                exit(1); */
++                exit(1);
++       }
 +
  	if (rfilename == NULL)
  		lg(LOG_INFO, "listening on %s", interface);
  
-@@ -513,8 +573,8 @@
+@@ -513,8 +574,8 @@
  	t = h->ts.tv_sec;
  	can_checkpoint = 0;
  	if (!ent_add(sia, sea, t, NULL))
@@ -137,7 +138,7 @@ Index: arpwatch.c
  	can_checkpoint = 1;
  
  	if (docheckpoint) {
-@@ -673,8 +733,8 @@
+@@ -673,8 +734,8 @@
  	t = h->ts.tv_sec;
  	can_checkpoint = 0;
  	if (!ent_add(sia, sea, t, NULL))
@@ -148,7 +149,7 @@ Index: arpwatch.c
  	can_checkpoint = 1;
  
  	if (docheckpoint) {
-@@ -944,6 +1004,6 @@
+@@ -944,6 +1005,6 @@
  	    "usage: %s [-CdFNpqsvzZ] [-D arpdir] [-f datafile]"
  	    " [-i interface]\n\t"
  	    " [-P pidfile] [-w watcher@email] [-W watchee@email]\n\t"
