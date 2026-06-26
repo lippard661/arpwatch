@@ -2,7 +2,7 @@ Add -u flag, to drop privileges to that user given
 
 Index: arpwatch.8
 --- arpwatch.8.in.orig	Sat Dec  2 17:48:53 2023
-+++ arpwatch.8.in	Tue May 28 15:16:35 2024
++++ arpwatch.8.in	Fri Jun 26 09:27:35 2026
 @@ -43,6 +43,7 @@
  .Op Fl n Ar net[/width]
  .Op Fl x Ar net[/width]
@@ -39,7 +39,26 @@ Index: arpwatch.8
  Note that an empty
  .Ar arp.dat
  file must be created before the first time you run
-@@ -222,8 +235,8 @@
+@@ -187,8 +200,6 @@
+ .It Ic "flip flop"
+ The ethernet address has changed from the most recently seen address to
+ the second most recently seen address.
+-(If either the old or new ethernet address is a DECnet address and it
+-is less than 24 hours, the email version of the report is suppressed.)
+ .TP
+ .It Ic "changed ethernet address"
+ The host switched to a new ethernet address.
+@@ -211,9 +222,6 @@
+ The ethernet address has changed from the most recently seen address to
+ the third (or greater) least recently seen address.
+ (This is similar to a flip flop.)
+-.It Ic "suppressed DECnet flip flop"
+-A "flip flop" report was suppressed because one of the two
+-addresses was a DECnet address.
+ .Sh SIGNALS
+ Normally
+ .Nm
+@@ -222,8 +230,8 @@
  once every 15 minutes.
  The SIGHUP signal causes it to update immediately.
  .Sh FILES
@@ -50,3 +69,12 @@ Index: arpwatch.8
  default directory
  .It Pa arp.dat
  default ethernet/ip address database
+@@ -247,8 +255,5 @@
+ .Sh BUGS
+ Please send bug reports to
+ .Aq arpwatch@ee.lbl.gov .
+-.Pp
+-Attempts are made to suppress DECnet flip flops but they
+-aren't always successful.
+ .Pp
+ Most error messages are posted using syslog.

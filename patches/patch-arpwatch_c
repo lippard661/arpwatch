@@ -118,7 +118,7 @@ Index: arpwatch.c
  		exit(1);
  	}
 +
-+       /* pledge not used earlier because need pcap_filter BIOCSETF, not in bpf promise */
++       /* pledge not used earlier because prior need of pcap_filter BIOCSETF, not in bpf promise */
 +       if (pledge ("stdio rpath wpath cpath inet dns proc exec tty bpf", NULL) == -1) {
 +	        lg(LOG_ERR, "pledge: %s", strerror(errno));
 +                exit(1);
