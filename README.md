@@ -9,4 +9,7 @@ It also adds the use of unveil and pledge (which has to be done a little
 later than the unveil due to the need for BIOCSETF in pcap_setfilter).
 (This has been submitted as an OpenBSD ports update as of 2026-06-26. Resubmitted with better diff 2026-07-23.)
 
-arpwatch-3.9.tgz is a Legion of Dynamic Discord signify-signed OpenBSD package (for OpenBSD 7.9). Signify public key is https://www.discord.org/lippard/software/discord.org-2026-pkg.pub
+A Legion of Dynamic Discord signify-signed OpenBSD package (for OpenBSD 8.0 and 7.9)
+can be found in https://discord.org/lippard/software/OpenBSD-packages/
+
+Signify public key is https://discord.org/lippard/software/discord.org-2026-pkg.pub
